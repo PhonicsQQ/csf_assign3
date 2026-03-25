@@ -5,6 +5,8 @@
 #include <cmath>
 #include <vector>
 
+
+//inialization for slot set and cache implementation
 struct Slot {
   uint32_t tag;
   bool valid, dirty;
@@ -44,10 +46,14 @@ int main( int argc, char **argv ) {
     return 1;
   }
 
+  //intialize writeAlloc writeBack and lru
   bool writeAlloc, writeBack, lru;
   std::string wa = argv[4];
   std::string wt = argv[5];
   std::string ev = argv[6];
+
+  //makesure our parameters are valid or invalid
+  //handle cases where our program is given bad input
   if (wa == "write-allocate") {
     writeAlloc = true;
   }
@@ -86,7 +92,37 @@ int main( int argc, char **argv ) {
     return 1;
   }
 
+  uint32_t offsetBits = bitSize(blkSize);
+  uint32_t indexBits = bitSize(numSets);
+
+  Cache newCache;
+  newCache.sets.resize(numSets);
+  for (auto &set : newCache.sets) {
+    set.slots.resize(numBlocks);
+  }
+
+  uint32_t totalLoads = 0;
+  uint32_t totalStores = 0;
+  uint32_t loadHits = 0;
+  uint32_t loadMisses = 0;
+  uint32_t storeHits = 0;
+  uint32_t storeMisses = 0;
+  uint32_t totalSizes = 0;
+  uint32_t timestamps = 0;
+
+
   return 0;
 }
+
+uint32_t bitSize(uint32_t n) {
+  uint32_t size = 0;
+  while (n > 1) {
+    n = n >> 1;
+    size++;
+  }
+  return size;
+}
+
+
 
 
