@@ -25,6 +25,52 @@ bool isPowderOf2(uint64_t n) {
   return n && !(n & (n - 1));
 }
 
+//size helper function
+uint32_t bitSize(uint32_t n) {
+  uint32_t size = 0;
+  while (n > 1) {
+    n = n >> 1;
+    size++;
+  }
+  return size;
+  
+}
+
+
+//empty slot helper
+int findEmpty(const Set &set) {
+  for (int i = 0; i < (int)set.slots.size(); i++) {
+    if (!set.slots[i].valid) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+//find oldest slot using FIFO methodology
+int findEvict(const Set &set, bool lru) {
+  uint32_t evictIndex = 0;
+  uint32_t lastIn = set.slots[0].access_ts;
+  uint32_t currIn;
+  for (int i = 0; i < (int)set.slots.size(); i++) {
+    if(lru) {
+      currIn = set.slots[i].access_ts;
+
+    }
+    else {
+      currIn = set.slots[i].load_ts;
+    }
+
+    if (currIn < lastIn) {
+      lastIn = currIn;
+       evictIndex = i;
+    }
+
+  }
+  return evictIndex;
+
+}
 int main( int argc, char **argv ) {
   //handle incorrect amount
   if (argc != 7) {
@@ -107,14 +153,14 @@ int main( int argc, char **argv ) {
   }
 
   //loads stores, etc...
-  uint32_t totalLoads = 0;
-  uint32_t totalStores = 0;
-  uint32_t loadHits = 0;
-  uint32_t loadMisses = 0;
-  uint32_t storeHits = 0;
-  uint32_t storeMisses = 0;
-  uint32_t totalSizes = 0;
-  uint32_t timestamps = 0;
+  uint64_t totalLoads = 0;
+  uint64_t totalStores = 0;
+  uint64_t loadHits = 0;
+  uint64_t loadMisses = 0;
+  uint64_t storeHits = 0;
+  uint64_t storeMisses = 0;
+  uint64_t totalCycles = 0;
+  uint64_t timestamps = 0;
   
 
   //parse the traces
@@ -140,28 +186,139 @@ int main( int argc, char **argv ) {
       timestamps++;
   
       //update load or store values
-      bool isLoad = (operation == 'l');
-      if(isLoad) {
+      bool loaded = (operation == 'l');
+
+      if(loaded) {
         totalLoads++;
-      } else {
+      } 
+      else {
         totalStores++;
       }
+
+      int hit = -67;
+      for(int i = 0; i <  (int)set.slots.size(); i++) {
+        if(set.slots[i].valid && set.slots[i].tag == tag) {
+          hit = i;
+          break;
+        }
+
+      }
+
+      if(hit >= 0) {
+      // Cache hit
+        if(loaded) {
+          loadHits++;
+          totalCycles++;
+          
+        } 
+        else {
+          storeHits++;
+          totalCycles++;
+          if (writeBack) {
+            set.slots[hit].dirty = true;
+          } else {
+            // writethrough
+            totalCycles += 100;
+          }
+        }
+
+        
+        set.slots[hit].access_ts = timestamps;
+
+      } 
+      else {
+        // Cache miss
+        if(loaded) {
+          loadMisses++;
+          totalCycles++;
+          totalCycles += blkSize/4 * 100;
+          //try to insert in new slot thats empty
+          hit = findEmpty(set);
+          //if no empty spots then we have to free up one with FIFO logic
+          if (hit < 0) {
+            hit = findEvict(set, lru);
+
+            if (set.slots[hit].dirty) {
+              totalCycles += blkSize/4 * 100;
+
+            }
+          }
+
+
+          set.slots[hit].valid = true;
+          set.slots[hit].tag = tag;
+          set.slots[hit].access_ts = timestamps;
+          set.slots[hit].dirty = false;
+          set.slots[hit].load_ts = timestamps;
+
+
+        } 
+        else {
+          storeMisses++;
+          
+          if(writeAlloc) {
+            totalCycles += blkSize/4 * 100 + 1;
+            hit = findEmpty(set);
+
+            if (hit < 0) {
+              hit = findEvict(set, lru);
+
+              if (set.slots[hit].dirty) {
+                totalCycles += blkSize/4 * 100;
+
+              }
+            }
+
+            set.slots[hit].valid = true;
+            set.slots[hit].tag = tag;
+            set.slots[hit].access_ts = timestamps;
+            set.slots[hit].dirty = false;
+            set.slots[hit].load_ts = timestamps;
+
+            if (writeBack) {
+              set.slots[hit].dirty = true;
+            } else {
+              // writethrough
+              set.slots[hit].dirty = false;
+              totalCycles += 100;
+            }
+
+
+        }
+        else {
+
+          //no write alloc so skip
+          totalCycles += 100 + 1;
+        }
+
+
+      }
+
+
     }
+    
   }
 
+  
+
+  
+
+  
+  }
+
+  std::cout << "Total loads: " << totalLoads << std::endl;
+  std::cout << "Total stores: " << totalStores << std::endl;
+  std::cout << "Load hits: " << loadHits << std::endl;
+  std::cout << "Load misses: " << loadMisses << std::endl;
+  std::cout << "Store hits: " << storeHits << std::endl;
+  std::cout << "Store misses: " << storeMisses << std::endl;
+  std::cout << "Total cycles: " << totalCycles << std::endl;
 
   return 0;
 }
 
-//size helper function
-uint32_t bitSize(uint32_t n) {
-  uint32_t size = 0;
-  while (n > 1) {
-    n = n >> 1;
-    size++;
-  }
-  return size;
-}
+
+
 
 
 
