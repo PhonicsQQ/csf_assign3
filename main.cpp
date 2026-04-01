@@ -48,10 +48,10 @@ int findEmpty(const Set &set) {
 }
 
 
-//find oldest slot using FIFO methodology
+//find oldest slot using either methodology
 int findEvict(const Set &set, bool lru) {
   uint32_t evictIndex = 0;
-  uint32_t lastIn = set.slots[0].access_ts;
+  uint32_t lastIn = lru ? set.slots[0].access_ts : set.slots[0].load_ts;
   uint32_t currIn;
   for (int i = 0; i < (int)set.slots.size(); i++) {
     if(lru) {
@@ -136,13 +136,13 @@ int main( int argc, char **argv ) {
 
   //ERROR HANDLING: numSets, numBlocks, or blkSize entered incorrectly
   if (!isPowerOf2(numSets) || !isPowerOf2(numBlocks) || !isPowerOf2(blkSize)) {
-    std::cerr << "All arguments must be powers of 2." << std::endl;
+    std::cerr << "All arguments must be powers of 2" << std::endl;
     return 1;
   }
 
   //ERROR HANDLING: blkSize entered incorrectly
   if (blkSize < 4) {
-    std::cerr << "Block size must be greater than 4 "<< std::endl;
+    std::cerr << "Block size must be greater than 4"<< std::endl;
     return 1;
   }
 
@@ -293,26 +293,14 @@ int main( int argc, char **argv ) {
               totalCycles += 100;
             }
         }
-
         else {
-
           //no write alloc so skip
           totalCycles += 100 + 1;
         }
-
-
       }
-
-
     }
     
-  }
-
-  
-
-  
-
-  
+  }  
   }
 
   std::cout << "Total loads: " << totalLoads << std::endl;
