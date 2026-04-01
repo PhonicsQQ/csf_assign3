@@ -21,7 +21,7 @@ struct Cache {
   std::vector<Set> sets;
 };
 
-bool isPowderOf2(uint64_t n) {
+bool isPowerOf2(uint64_t n) {
   return n && !(n & (n - 1));
 }
 
@@ -69,10 +69,61 @@ int findEvict(const Set &set, bool lru) {
 
   }
   return evictIndex;
-
 }
+
+// parse input for write allocate, write through, and eviction
+// place corresponding flag into flag_init
+// return 0 if all flags are parsed without error; else, return 1 (error code)
+bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[]) {
+  
+  // handle write allocate flag
+  if (wa == "write-allocate") {
+    flag_init[0] = true;
+  }
+  else if(wa == "no-write-allocate") {
+    flag_init[0] = false;
+  }
+  else {
+    std::cerr << "invalid write-alloc arg" << std::endl;
+    return 1;
+  }
+
+  // handle write through flag
+  if (wt == "write-through") {
+    flag_init[1] = false;
+  }
+  else if(wt == "write-back") {
+    flag_init[1] = true;
+  }
+  else {
+    std::cerr << "invalid write-through arg" << std::endl;
+    return 1; 
+  }
+
+  // handle eviction flag
+  if (ev == "lru") {
+    flag_init[2] = true;
+  }
+  else if(ev == "fifo") {
+    flag_init[2] = false;
+  }
+  else {
+    std::cerr << "invalid eviction arg" << std::endl;
+    return 1; 
+  }
+
+  //if writeallocate is false and writeback is true
+  if (!flag_init[0] && flag_init[1]) {
+    std::cerr << "write should allocate and also write back" << std::endl;
+    return 1;
+  }
+
+  // all args handled, successfully set flags
+  return 0;
+}
+
 int main( int argc, char **argv ) {
-  //handle incorrect amount
+  //ERROR HANDLING: incorrect number of args entered
   if (argc != 7) {
     std::cerr << "Expected 6 elements but got " << (argc - 1) << std::endl;
     return 1;
@@ -82,64 +133,28 @@ int main( int argc, char **argv ) {
   uint32_t numSets = atoi(argv[1]);
   uint32_t numBlocks = atoi(argv[2]);
   uint32_t blkSize = atoi(argv[3]);
-  if (!isPowderOf2(numSets) || !isPowderOf2(numBlocks) || !isPowderOf2(blkSize)) {
+
+  //ERROR HANDLING: numSets, numBlocks, or blkSize entered incorrectly
+  if (!isPowerOf2(numSets) || !isPowerOf2(numBlocks) || !isPowerOf2(blkSize)) {
     std::cerr << "All arguments must be powers of 2." << std::endl;
     return 1;
   }
 
+  //ERROR HANDLING: blkSize entered incorrectly
   if (blkSize < 4) {
     std::cerr << "Block size must be greater than 4 "<< std::endl;
     return 1;
   }
 
   //intialize writeAlloc writeBack and lru
-  bool writeAlloc, writeBack, lru;
-  std::string wa = argv[4];
-  std::string wt = argv[5];
-  std::string ev = argv[6];
-
-  //makesure our parameters are valid or invalid
-  //handle cases where our program is given bad input
-  if (wa == "write-allocate") {
-    writeAlloc = true;
-  }
-  else if(wa == "no-write-allocate") {
-    writeAlloc = false;
-  }
-  else {
-    std::cerr << "invalid write-allocate arg" << std::endl;
-    return 1; 
-  }
-
-  //write alloc
-  if (wt == "write-through") {
-    writeBack = false;
-  }
-  else if(wt == "write-back") {
-    writeBack = true;
-  }
-  else {
-    std::cerr << "invalid write-through arg" << std::endl;
-    return 1; 
-  }
-
-  //evictions
-  if (ev == "lru") {
-    lru = true;
-  }
-  else if(ev == "fifo") {
-    lru = false;
-  }
-  else {
-    std::cerr << "invalid eviction arg" << std::endl;
-    return 1; 
-  }
-
-  //if writeallocate is false and writeback is true
-  if (!writeAlloc && writeBack) {
-    std::cerr << "write should allocate and also write back" << std::endl;
+  bool flag_init[3];
+  // ERROR HANDLING: incorrect args inputted
+  if (handleFlags(argv[4], argv[5], argv[6], flag_init) == 1) {
     return 1;
   }
+  bool writeAlloc = flag_init[0];
+  bool writeBack = flag_init[1];
+  bool lru = flag_init[2];
 
   //offset and index initalization
   uint32_t offsetBits = bitSize(blkSize);
@@ -170,13 +185,13 @@ int main( int argc, char **argv ) {
 
       char operation;
       uint32_t address;
-      int ignore;
+      int data; // ignored for this assignment
 
       //string stream to help parse the input
       std::stringstream ss(line);
       ss >> operation;
       ss >> std::hex >> address;
-      ss >> std::dec >> ignore;
+      ss >> std::dec >> data;
   
       // Extract index and tag 
       uint32_t index = (address >> offsetBits) & ((1u << indexBits) - 1);
@@ -195,13 +210,12 @@ int main( int argc, char **argv ) {
         totalStores++;
       }
 
-      int hit = -67;
+      int hit = -1;
       for(int i = 0; i <  (int)set.slots.size(); i++) {
         if(set.slots[i].valid && set.slots[i].tag == tag) {
           hit = i;
           break;
         }
-
       }
 
       if(hit >= 0) {
@@ -221,11 +235,9 @@ int main( int argc, char **argv ) {
             totalCycles += 100;
           }
         }
-
-        
         set.slots[hit].access_ts = timestamps;
-
       } 
+
       else {
         // Cache miss
         if(loaded) {
@@ -244,15 +256,13 @@ int main( int argc, char **argv ) {
             }
           }
 
-
           set.slots[hit].valid = true;
           set.slots[hit].tag = tag;
           set.slots[hit].access_ts = timestamps;
           set.slots[hit].dirty = false;
           set.slots[hit].load_ts = timestamps;
-
-
         } 
+
         else {
           storeMisses++;
           
@@ -282,9 +292,8 @@ int main( int argc, char **argv ) {
               set.slots[hit].dirty = false;
               totalCycles += 100;
             }
-
-
         }
+
         else {
 
           //no write alloc so skip
