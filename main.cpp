@@ -167,16 +167,9 @@ int main( int argc, char **argv ) {
     set.slots.resize(numBlocks);
   }
 
-  //loads stores, etc...
-  uint64_t totalLoads = 0;
-  uint64_t totalStores = 0;
-  uint64_t loadHits = 0;
-  uint64_t loadMisses = 0;
-  uint64_t storeHits = 0;
-  uint64_t storeMisses = 0;
-  uint64_t totalCycles = 0;
-  uint64_t timestamps = 0;
-  
+  //cacheData array stores relevant information about cache. The following indices store the following data:
+  //0 - totalLoads; 1 - totalStores; 2 - loadHits; 3 - loadMisses; 4 - storeHits; 5 - storeMisses; 6 - totalCycles; 7 - timestamps
+  uint64_t cacheData[8] = {0};
 
   //parse the traces
   std::string line;
@@ -198,16 +191,16 @@ int main( int argc, char **argv ) {
       uint32_t tag = address >> (offsetBits + indexBits);
   
       Set &set = newCache.sets[index];
-      timestamps++;
+      cacheData[7]++;
   
       //update load or store values
       bool loaded = (operation == 'l');
 
       if(loaded) {
-        totalLoads++;
+        cacheData[0]++;
       } 
       else {
-        totalStores++;
+        cacheData[1]++;
       }
 
       int hit = -1;
@@ -221,29 +214,29 @@ int main( int argc, char **argv ) {
       if(hit >= 0) {
       // Cache hit
         if(loaded) {
-          loadHits++;
-          totalCycles++;
+          cacheData[2]++;
+          cacheData[6]++;
           
         } 
         else {
-          storeHits++;
-          totalCycles++;
+          cacheData[4]++;
+          cacheData[6]++;
           if (writeBack) {
             set.slots[hit].dirty = true;
           } else {
             // writethrough
-            totalCycles += 100;
+            cacheData[6] += 100;
           }
         }
-        set.slots[hit].access_ts = timestamps;
+        set.slots[hit].access_ts = cacheData[7];
       } 
 
       else {
         // Cache miss
         if(loaded) {
-          loadMisses++;
-          totalCycles++;
-          totalCycles += blkSize/4 * 100;
+          cacheData[3]++;
+          cacheData[6]++;
+          cacheData[6] += blkSize/4 * 100;
           //try to insert in new slot thats empty
           hit = findEmpty(set);
           //if no empty spots then we have to free up one with FIFO logic
@@ -251,51 +244,51 @@ int main( int argc, char **argv ) {
             hit = findEvict(set, lru);
 
             if (set.slots[hit].dirty) {
-              totalCycles += blkSize/4 * 100;
+              cacheData[6] += blkSize/4 * 100;
 
             }
           }
 
           set.slots[hit].valid = true;
           set.slots[hit].tag = tag;
-          set.slots[hit].access_ts = timestamps;
+          set.slots[hit].access_ts = cacheData[7];
           set.slots[hit].dirty = false;
-          set.slots[hit].load_ts = timestamps;
+          set.slots[hit].load_ts = cacheData[7];
         } 
 
         else {
-          storeMisses++;
+          cacheData[5]++;
           
           if(writeAlloc) {
-            totalCycles += blkSize/4 * 100 + 1;
+            cacheData[6] += blkSize/4 * 100 + 1;
             hit = findEmpty(set);
 
             if (hit < 0) {
               hit = findEvict(set, lru);
 
               if (set.slots[hit].dirty) {
-                totalCycles += blkSize/4 * 100;
+                cacheData[6] += blkSize/4 * 100;
 
               }
             }
 
             set.slots[hit].valid = true;
             set.slots[hit].tag = tag;
-            set.slots[hit].access_ts = timestamps;
+            set.slots[hit].access_ts = cacheData[7];
             set.slots[hit].dirty = false;
-            set.slots[hit].load_ts = timestamps;
+            set.slots[hit].load_ts = cacheData[7];
 
             if (writeBack) {
               set.slots[hit].dirty = true;
             } else {
               // writethrough
               set.slots[hit].dirty = false;
-              totalCycles += 100;
+              cacheData[6] += 100;
             }
         }
         else {
           //no write alloc so skip
-          totalCycles += 100 + 1;
+          cacheData[6] += 100 + 1;
         }
       }
     }
@@ -303,20 +296,13 @@ int main( int argc, char **argv ) {
   }  
   }
 
-  std::cout << "Total loads: " << totalLoads << std::endl;
-  std::cout << "Total stores: " << totalStores << std::endl;
-  std::cout << "Load hits: " << loadHits << std::endl;
-  std::cout << "Load misses: " << loadMisses << std::endl;
-  std::cout << "Store hits: " << storeHits << std::endl;
-  std::cout << "Store misses: " << storeMisses << std::endl;
-  std::cout << "Total cycles: " << totalCycles << std::endl;
+  std::cout << "Total loads: " << cacheData[0] << std::endl;
+  std::cout << "Total stores: " << cacheData[1] << std::endl;
+  std::cout << "Load hits: " << cacheData[2] << std::endl;
+  std::cout << "Load misses: " << cacheData[3] << std::endl;
+  std::cout << "Store hits: " << cacheData[4] << std::endl;
+  std::cout << "Store misses: " << cacheData[5] << std::endl;
+  std::cout << "Total cycles: " << cacheData[6] << std::endl;
 
   return 0;
 }
-
-
-
-
-
-
-
