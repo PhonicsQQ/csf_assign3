@@ -139,6 +139,19 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, Flag &flags) {
   return 0;
 }
 
+void handleCacheHit(bool loaded, CacheData &cacheData, bool writeBack, Set &set, int hit) {
+  // load only needs to increase count because it is already on the cache
+  if(loaded) {
+    cacheData.loadHits++;
+    cacheData.totalCycles++;
+  }
+  // handle store case
+  else {
+    handleStoreHit(cacheData, writeBack, set, hit);
+  }
+  set.slots[hit].access_ts = cacheData.timestamps;
+}
+
 // handle case when store command results in cache hit
 void handleStoreHit(CacheData &cacheData, bool writeBack, Set &set, int hit) {
   // update storeHits and totalCycles
@@ -150,6 +163,62 @@ void handleStoreHit(CacheData &cacheData, bool writeBack, Set &set, int hit) {
   } 
   // handle writethrough
   else {
+    cacheData.totalCycles += 100;
+  }
+}
+
+void handleCacheMissLoad(CacheData &cacheData, uint32_t blkSize, Set &set, bool lru, uint32_t tag) {
+  cacheData.loadMisses++;
+  cacheData.totalCycles++;
+  cacheData.totalCycles += blkSize/4 * 100;
+  //try to insert in new slot thats empty
+  int hit = findEmpty(set);
+  //if no empty spots then we have to free up one with FIFO logic
+  if (hit < 0) {
+    hit = findEvict(set, lru);
+    if (set.slots[hit].dirty) {
+      cacheData.totalCycles += blkSize/4 * 100;
+
+    }
+  }
+
+  // update cache to hold address
+  set.slots[hit].valid = true;
+  set.slots[hit].tag = tag;
+  set.slots[hit].access_ts = cacheData.timestamps;
+  set.slots[hit].dirty = false;
+  set.slots[hit].load_ts = cacheData.timestamps;
+}
+
+// update cache and cacheData for when store results in a cache miss and write alloc is true
+void handleCacheMissStoreWriteAlloc(CacheData &cacheData, uint32_t blkSize, Set &set, const Flag &flags, uint32_t tag) {
+  
+  // check if there is empty slot in cache to insert to
+  cacheData.totalCycles += blkSize/4 * 100 + 1;
+  int hit = findEmpty(set);
+
+  // no empty slot; handle eviction
+  if (hit < 0) {
+    hit = findEvict(set, flags.lru);
+    if (set.slots[hit].dirty) {
+      cacheData.totalCycles += blkSize/4 * 100;
+    }
+  }
+
+  // update cache to hold address
+  set.slots[hit].valid = true;
+  set.slots[hit].tag = tag;
+  set.slots[hit].access_ts = cacheData.timestamps;
+  set.slots[hit].dirty = false;
+  set.slots[hit].load_ts = cacheData.timestamps;
+
+  // writeBack
+  if (flags.writeBack) {
+    set.slots[hit].dirty = true;
+  } 
+  // writethrough
+  else {
+    set.slots[hit].dirty = false;
     cacheData.totalCycles += 100;
   }
 }
@@ -177,7 +246,6 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, const 
 
   //update load or store values
   bool loaded = (operation == 'l');
-
   if(loaded) {
     cacheData.totalLoads++;
   } 
@@ -196,72 +264,20 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, const 
 
   // Cache hit
   if(hit >= 0) {
-    // load only needs to increase count because it is already on the cache
-    if(loaded) {
-      cacheData.loadHits++;
-      cacheData.totalCycles++;
-    }
-    // handle store case
-    else {
-      handleStoreHit(cacheData, flags.writeBack, set, hit);
-    }
-    set.slots[hit].access_ts = cacheData.timestamps;
-  } 
-
+    handleCacheHit(loaded, cacheData, flags.writeBack, set, hit);
+  }
+  // Cache miss
   else {
-    // Cache miss
     if(loaded) {
-      cacheData.loadMisses++;
-      cacheData.totalCycles++;
-      cacheData.totalCycles += blkSize/4 * 100;
-      //try to insert in new slot thats empty
-      hit = findEmpty(set);
-      //if no empty spots then we have to free up one with FIFO logic
-      if (hit < 0) {
-        hit = findEvict(set, flags.lru);
-
-        if (set.slots[hit].dirty) {
-          cacheData.totalCycles += blkSize/4 * 100;
-
-        }
-      }
-
-      set.slots[hit].valid = true;
-      set.slots[hit].tag = tag;
-      set.slots[hit].access_ts = cacheData.timestamps;
-      set.slots[hit].dirty = false;
-      set.slots[hit].load_ts = cacheData.timestamps;
+      handleCacheMissLoad(cacheData, blkSize, set, flags.lru, tag);
     } 
-
-      else {
-        cacheData.storeMisses++;
-        
-        if(flags.writeAlloc) {
-          cacheData.totalCycles += blkSize/4 * 100 + 1;
-          hit = findEmpty(set);
-
-          if (hit < 0) {
-            hit = findEvict(set, flags.lru);
-
-            if (set.slots[hit].dirty) {
-              cacheData.totalCycles += blkSize/4 * 100;
-
-            }
-          }
-
-          set.slots[hit].valid = true;
-          set.slots[hit].tag = tag;
-          set.slots[hit].access_ts = cacheData.timestamps;
-          set.slots[hit].dirty = false;
-          set.slots[hit].load_ts = cacheData.timestamps;
-
-          if (flags.writeBack) {
-            set.slots[hit].dirty = true;
-          } else {
-            // writethrough
-            set.slots[hit].dirty = false;
-            cacheData.totalCycles += 100;
-          }
+    else {
+      // increase counter
+      cacheData.storeMisses++;
+      
+      // handle store miss with writeAlloc
+      if(flags.writeAlloc) {
+        handleCacheMissStoreWriteAlloc(cacheData, blkSize, set, flags, tag);
       }
       else {
         //no write alloc so skip
@@ -271,6 +287,7 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, const 
   }  
 }
 
+// print cacheData in accordance to assignment specifications
 void printOutputs(CacheData cacheData) {
   std::cout << "Total loads: " << cacheData.totalLoads << std::endl;
   std::cout << "Total stores: " << cacheData.totalStores << std::endl;
@@ -280,7 +297,6 @@ void printOutputs(CacheData cacheData) {
   std::cout << "Store misses: " << cacheData.storeMisses << std::endl;
   std::cout << "Total cycles: " << cacheData.totalCycles << std::endl;
 }
-
 
 int main( int argc, char **argv ) {
   //ERROR HANDLING: incorrect number of args entered
