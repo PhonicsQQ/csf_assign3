@@ -1,0 +1,85 @@
+=== Results per Cache Size (ranked by total cycles) ===
+
+  -- Cache sets=1 --
+    Total Cycles    Hit Rate   Configuration
+    9548793         .958956    sets=1 blocks=512 wa=write-allocate write-back wt= evict=lru
+    9650267         .909549    sets=1 blocks=512 wa=no-write-allocate write-through wt= evict=lru
+    9759766         .908312    sets=1 blocks=512 wa=no-write-allocate write-through wt= evict=fifo
+    10001569        .905667    sets=1 blocks=256 wa=no-write-allocate write-through wt= evict=lru
+    11006605        .896837    sets=1 blocks=256 wa=no-write-allocate write-through wt= evict=fifo
+    11061593        .948824    sets=1 blocks=512 wa=write-allocate write-back wt= evict=fifo
+    11301193        .946456    sets=1 blocks=256 wa=write-allocate write-back wt= evict=lru
+    11974247        .887675    sets=1 blocks=128 wa=no-write-allocate write-through wt= evict=lru
+    12699572        .879462    sets=1 blocks=128 wa=no-write-allocate write-through wt= evict=fifo
+    13042793        .936730    sets=1 blocks=256 wa=write-allocate write-back wt= evict=fifo
+    13533293        .958956    sets=1 blocks=512 wa=write-allocate write-through wt= evict=lru
+    13622393        .931637    sets=1 blocks=128 wa=write-allocate write-back wt= evict=lru
+    14762093        .948824    sets=1 blocks=512 wa=write-allocate write-through wt= evict=fifo
+    15049293        .946456    sets=1 blocks=256 wa=write-allocate write-through wt= evict=lru
+    16228893        .936730    sets=1 blocks=256 wa=write-allocate write-through wt= evict=fifo
+    16444393        .916854    sets=1 blocks=128 wa=write-allocate write-back wt= evict=fifo
+    16846493        .931637    sets=1 blocks=128 wa=write-allocate write-through wt= evict=lru
+    18639293        .916854    sets=1 blocks=128 wa=write-allocate write-through wt= evict=fifo
+
+  -- Cache sets=128 --
+    Total Cycles    Hit Rate   Configuration
+    8991593         .961414    sets=128 blocks=8 wa=write-allocate write-back wt= evict=lru
+    9549993         .959039    sets=128 blocks=4 wa=write-allocate write-back wt= evict=lru
+    9557203         .910766    sets=128 blocks=8 wa=no-write-allocate write-through wt= evict=lru
+    9603171         .910281    sets=128 blocks=8 wa=no-write-allocate write-through wt= evict=fifo
+    9661042         .909377    sets=128 blocks=4 wa=no-write-allocate write-through wt= evict=lru
+    9679193         .956875    sets=128 blocks=8 wa=write-allocate write-back wt= evict=fifo
+    9756579         .908381    sets=128 blocks=4 wa=no-write-allocate write-through wt= evict=fifo
+    10935593        .949794    sets=128 blocks=4 wa=write-allocate write-back wt= evict=fifo
+    13235293        .961414    sets=128 blocks=8 wa=write-allocate write-through wt= evict=lru
+    13523293        .959039    sets=128 blocks=4 wa=write-allocate write-through wt= evict=lru
+    13785693        .956875    sets=128 blocks=8 wa=write-allocate write-through wt= evict=fifo
+    14644493        .949794    sets=128 blocks=4 wa=write-allocate write-through wt= evict=fifo
+    18024090        .831981    sets=128 blocks=1 wa=no-write-allocate write-through wt= evict=fifo
+    18024090        .831981    sets=128 blocks=1 wa=no-write-allocate write-through wt= evict=lru
+    23141593        .866517    sets=128 blocks=1 wa=write-allocate write-back wt= evict=fifo
+    23141593        .866517    sets=128 blocks=1 wa=write-allocate write-back wt= evict=lru
+    24744093        .866517    sets=128 blocks=1 wa=write-allocate write-through wt= evict=fifo
+    24744093        .866517    sets=128 blocks=1 wa=write-allocate write-through wt= evict=lru
+
+  -- Cache sets=256 --
+    Total Cycles    Hit Rate   Configuration
+    8509993         .961819    sets=256 blocks=8 wa=write-allocate write-back wt= evict=lru
+    8782393         .960104    sets=256 blocks=8 wa=write-allocate write-back wt= evict=fifo
+    9009593         .961311    sets=256 blocks=4 wa=write-allocate write-back wt= evict=lru
+    9549214         .910868    sets=256 blocks=8 wa=no-write-allocate write-through wt= evict=lru
+    9564400         .910697    sets=256 blocks=8 wa=no-write-allocate write-through wt= evict=fifo
+    9569598         .910647    sets=256 blocks=4 wa=no-write-allocate write-through wt= evict=lru
+    9611162         .910185    sets=256 blocks=4 wa=no-write-allocate write-through wt= evict=fifo
+    9655593         .956961    sets=256 blocks=4 wa=write-allocate write-back wt= evict=fifo
+    11231805        .892335    sets=256 blocks=1 wa=no-write-allocate write-through wt= evict=fifo
+    11231805        .892335    sets=256 blocks=1 wa=no-write-allocate write-through wt= evict=lru
+    13186093        .961819    sets=256 blocks=8 wa=write-allocate write-through wt= evict=lru
+    13247693        .961311    sets=256 blocks=4 wa=write-allocate write-through wt= evict=lru
+    13394093        .960104    sets=256 blocks=8 wa=write-allocate write-through wt= evict=fifo
+    13775293        .956961    sets=256 blocks=4 wa=write-allocate write-through wt= evict=fifo
+    14381193        .929259    sets=256 blocks=1 wa=write-allocate write-back wt= evict=fifo
+    14381193        .929259    sets=256 blocks=1 wa=write-allocate write-back wt= evict=lru
+    17134893        .929259    sets=256 blocks=1 wa=write-allocate write-through wt= evict=fifo
+    17134893        .929259    sets=256 blocks=1 wa=write-allocate write-through wt= evict=lru
+
+  -- Cache sets=512 --
+    Total Cycles    Hit Rate   Configuration
+    7753193         .961987    sets=512 blocks=8 wa=write-allocate write-back wt= evict=lru
+    7848793         .961625    sets=512 blocks=8 wa=write-allocate write-back wt= evict=fifo
+    8521593         .961753    sets=512 blocks=4 wa=write-allocate write-back wt= evict=lru
+    8796793         .960035    sets=512 blocks=4 wa=write-allocate write-back wt= evict=fifo
+    9543218         .910931    sets=512 blocks=8 wa=no-write-allocate write-through wt= evict=lru
+    9550414         .910858    sets=512 blocks=4 wa=no-write-allocate write-through wt= evict=lru
+    9552003         .910809    sets=512 blocks=8 wa=no-write-allocate write-through wt= evict=fifo
+    9565596         .910674    sets=512 blocks=4 wa=no-write-allocate write-through wt= evict=fifo
+    10067758        .904423    sets=512 blocks=1 wa=no-write-allocate write-through wt= evict=fifo
+    10067758        .904423    sets=512 blocks=1 wa=no-write-allocate write-through wt= evict=lru
+    11479593        .947178    sets=512 blocks=1 wa=write-allocate write-back wt= evict=fifo
+    11479593        .947178    sets=512 blocks=1 wa=write-allocate write-back wt= evict=lru
+    13165693        .961987    sets=512 blocks=8 wa=write-allocate write-through wt= evict=lru
+    13194093        .961753    sets=512 blocks=4 wa=write-allocate write-through wt= evict=lru
+    13209693        .961625    sets=512 blocks=8 wa=write-allocate write-through wt= evict=fifo
+    13402493        .960035    sets=512 blocks=4 wa=write-allocate write-through wt= evict=fifo
+    14961693        .947178    sets=512 blocks=1 wa=write-allocate write-through wt= evict=fifo
+    14961693        .947178    sets=512 blocks=1 wa=write-allocate write-through wt= evict=lru
