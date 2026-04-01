@@ -1,0 +1,1080 @@
+Sets:         128
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 279902
+Load misses: 38295
+Store hits: 179498
+Store misses: 17988
+Total cycles: 33377283
+
+Sets:         128
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 279902
+Load misses: 38295
+Store hits: 179498
+Store misses: 17988
+Total cycles: 33377283
+
+Sets:         128
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 279902
+Load misses: 38295
+Store hits: 179498
+Store misses: 17988
+Total cycles: 42777483
+
+Sets:         128
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 279902
+Load misses: 38295
+Store hits: 179498
+Store misses: 17988
+Total cycles: 42777483
+
+Sets:         128
+Blocks:       1
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 278823
+Load misses: 39374
+Store hits: 147985
+Store misses: 49501
+Total cycles: 36013883
+
+Sets:         128
+Blocks:       1
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 278823
+Load misses: 39374
+Store hits: 147985
+Store misses: 49501
+Total cycles: 36013883
+
+Sets:         128
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314007
+Load misses: 4190
+Store hits: 188015
+Store misses: 9471
+Total cycles: 10071683
+
+Sets:         128
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 312969
+Load misses: 5228
+Store hits: 187684
+Store misses: 9802
+Total cycles: 10901683
+
+Sets:         128
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314007
+Load misses: 4190
+Store hits: 188015
+Store misses: 9471
+Total cycles: 25728683
+
+Sets:         128
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 312969
+Load misses: 5228
+Store hits: 187684
+Store misses: 9802
+Total cycles: 26276283
+
+Sets:         128
+Blocks:       4
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 310963
+Load misses: 7234
+Store hits: 164328
+Store misses: 33158
+Total cycles: 23157883
+
+Sets:         128
+Blocks:       4
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 310010
+Load misses: 8187
+Store hits: 163165
+Store misses: 34321
+Total cycles: 23539083
+
+Sets:         128
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314908
+Load misses: 3289
+Store hits: 188278
+Store misses: 9208
+Total cycles: 9277683
+
+Sets:         128
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314249
+Load misses: 3948
+Store hits: 188090
+Store misses: 9396
+Total cycles: 9781683
+
+Sets:         128
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314908
+Load misses: 3289
+Store hits: 188278
+Store misses: 9208
+Total cycles: 25263083
+
+Sets:         128
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314249
+Load misses: 3948
+Store hits: 188090
+Store misses: 9396
+Total cycles: 25601883
+
+Sets:         128
+Blocks:       8
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311693
+Load misses: 6504
+Store hits: 164933
+Store misses: 32553
+Total cycles: 22865883
+
+Sets:         128
+Blocks:       8
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311124
+Load misses: 7073
+Store hits: 164120
+Store misses: 33366
+Total cycles: 23093483
+
+Sets:         256
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 298863
+Load misses: 19334
+Store hits: 185202
+Store misses: 12284
+Total cycles: 20312483
+
+Sets:         256
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 298863
+Load misses: 19334
+Store hits: 185202
+Store misses: 12284
+Total cycles: 20312483
+
+Sets:         256
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 298863
+Load misses: 19334
+Store hits: 185202
+Store misses: 12284
+Total cycles: 32911483
+
+Sets:         256
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 298863
+Load misses: 19334
+Store hits: 185202
+Store misses: 12284
+Total cycles: 32911483
+
+Sets:         256
+Blocks:       1
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 296251
+Load misses: 21946
+Store hits: 158894
+Store misses: 38592
+Total cycles: 29042683
+
+Sets:         256
+Blocks:       1
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 296251
+Load misses: 21946
+Store hits: 158894
+Store misses: 38592
+Total cycles: 29042683
+
+Sets:         256
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314798
+Load misses: 3399
+Store hits: 188250
+Store misses: 9236
+Total cycles: 9344483
+
+Sets:         256
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314171
+Load misses: 4026
+Store hits: 188047
+Store misses: 9439
+Total cycles: 9845283
+
+Sets:         256
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314798
+Load misses: 3399
+Store hits: 188250
+Store misses: 9236
+Total cycles: 25318283
+
+Sets:         256
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314171
+Load misses: 4026
+Store hits: 188047
+Store misses: 9439
+Total cycles: 25650283
+
+Sets:         256
+Blocks:       4
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311613
+Load misses: 6584
+Store hits: 164819
+Store misses: 32667
+Total cycles: 22897883
+
+Sets:         256
+Blocks:       4
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311017
+Load misses: 7180
+Store hits: 163705
+Store misses: 33781
+Total cycles: 23136283
+
+Sets:         256
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315261
+Load misses: 2936
+Store hits: 188513
+Store misses: 8973
+Total cycles: 8562483
+
+Sets:         256
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314928
+Load misses: 3269
+Store hits: 188417
+Store misses: 9069
+Total cycles: 8830083
+
+Sets:         256
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315261
+Load misses: 2936
+Store hits: 188513
+Store misses: 8973
+Total cycles: 25027883
+
+Sets:         256
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314928
+Load misses: 3269
+Store hits: 188417
+Store misses: 9069
+Total cycles: 25199483
+
+Sets:         256
+Blocks:       8
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311937
+Load misses: 6260
+Store hits: 165155
+Store misses: 32331
+Total cycles: 22768283
+
+Sets:         256
+Blocks:       8
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311649
+Load misses: 6548
+Store hits: 164824
+Store misses: 32662
+Total cycles: 22883483
+
+Sets:         512
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 308018
+Load misses: 10179
+Store hits: 186206
+Store misses: 11280
+Total cycles: 14469283
+
+Sets:         512
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 308018
+Load misses: 10179
+Store hits: 186206
+Store misses: 11280
+Total cycles: 14469283
+
+Sets:         512
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 308018
+Load misses: 10179
+Store hits: 186206
+Store misses: 11280
+Total cycles: 28847883
+
+Sets:         512
+Blocks:       1
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 308018
+Load misses: 10179
+Store hits: 186206
+Store misses: 11280
+Total cycles: 28847883
+
+Sets:         512
+Blocks:       1
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 305172
+Load misses: 13025
+Store hits: 160797
+Store misses: 36689
+Total cycles: 25474283
+
+Sets:         512
+Blocks:       1
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 305172
+Load misses: 13025
+Store hits: 160797
+Store misses: 36689
+Total cycles: 25474283
+
+Sets:         512
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315211
+Load misses: 2986
+Store hits: 188468
+Store misses: 9018
+Total cycles: 8607683
+
+Sets:         512
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314876
+Load misses: 3321
+Store hits: 188366
+Store misses: 9120
+Total cycles: 8875283
+
+Sets:         512
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315211
+Load misses: 2986
+Store hits: 188468
+Store misses: 9018
+Total cycles: 25065883
+
+Sets:         512
+Blocks:       4
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314876
+Load misses: 3321
+Store hits: 188366
+Store misses: 9120
+Total cycles: 25240683
+
+Sets:         512
+Blocks:       4
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311890
+Load misses: 6307
+Store hits: 165061
+Store misses: 32425
+Total cycles: 22787083
+
+Sets:         512
+Blocks:       4
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311580
+Load misses: 6617
+Store hits: 164692
+Store misses: 32794
+Total cycles: 22911083
+
+Sets:         512
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315537
+Load misses: 2660
+Store hits: 188563
+Store misses: 8923
+Total cycles: 7609683
+
+Sets:         512
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315354
+Load misses: 2843
+Store hits: 188507
+Store misses: 8979
+Total cycles: 7766483
+
+Sets:         512
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315537
+Load misses: 2660
+Store hits: 188563
+Store misses: 8923
+Total cycles: 24897483
+
+Sets:         512
+Blocks:       8
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 315354
+Load misses: 2843
+Store hits: 188507
+Store misses: 8979
+Total cycles: 24993083
+
+Sets:         512
+Blocks:       8
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 312133
+Load misses: 6064
+Store hits: 165206
+Store misses: 32280
+Total cycles: 22689883
+
+Sets:         512
+Blocks:       8
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311986
+Load misses: 6211
+Store hits: 165097
+Store misses: 32389
+Total cycles: 22748683
+
+Sets:         1
+Blocks:       128
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 310493
+Load misses: 7704
+Store hits: 186857
+Store misses: 10629
+Total cycles: 12654883
+
+Sets:         1
+Blocks:       128
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 306629
+Load misses: 11568
+Store hits: 185830
+Store misses: 11656
+Total cycles: 15673683
+
+Sets:         1
+Blocks:       128
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 310493
+Load misses: 7704
+Store hits: 186857
+Store misses: 10629
+Total cycles: 27597483
+
+Sets:         1
+Blocks:       128
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 306629
+Load misses: 11568
+Store hits: 185830
+Store misses: 11656
+Total cycles: 29553883
+
+Sets:         1
+Blocks:       128
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 307847
+Load misses: 10350
+Store hits: 161368
+Store misses: 36118
+Total cycles: 24404283
+
+Sets:         1
+Blocks:       128
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 303918
+Load misses: 14279
+Store hits: 158867
+Store misses: 38619
+Total cycles: 25975883
+
+Sets:         1
+Blocks:       256
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 313123
+Load misses: 5074
+Store hits: 187653
+Store misses: 9833
+Total cycles: 10802483
+
+Sets:         1
+Blocks:       256
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311025
+Load misses: 7172
+Store hits: 186977
+Store misses: 10509
+Total cycles: 12461283
+
+Sets:         1
+Blocks:       256
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 313123
+Load misses: 5074
+Store hits: 187653
+Store misses: 9833
+Total cycles: 26227083
+
+Sets:         1
+Blocks:       256
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311025
+Load misses: 7172
+Store hits: 186977
+Store misses: 10509
+Total cycles: 27336683
+
+Sets:         1
+Blocks:       256
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 309777
+Load misses: 8420
+Store hits: 163612
+Store misses: 33874
+Total cycles: 23632283
+
+Sets:         1
+Blocks:       256
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 307970
+Load misses: 10227
+Store hits: 161070
+Store misses: 36416
+Total cycles: 24355083
+
+Sets:         1
+Blocks:       512
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314275
+Load misses: 3922
+Store hits: 188096
+Store misses: 9390
+Total cycles: 9880883
+
+Sets:         1
+Blocks:       512
+Block size:   16
+Write alloc:  write-allocate write-back
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 313214
+Load misses: 4983
+Store hits: 187761
+Store misses: 9725
+Total cycles: 10740883
+
+Sets:         1
+Blocks:       512
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 314275
+Load misses: 3922
+Store hits: 188096
+Store misses: 9390
+Total cycles: 25589083
+
+Sets:         1
+Blocks:       512
+Block size:   16
+Write alloc:  write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 313214
+Load misses: 4983
+Store hits: 187761
+Store misses: 9725
+Total cycles: 26147483
+
+Sets:         1
+Blocks:       512
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     lru
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 311248
+Load misses: 6949
+Store hits: 164446
+Store misses: 33040
+Total cycles: 23043883
+
+Sets:         1
+Blocks:       512
+Block size:   16
+Write alloc:  no-write-allocate write-through
+Write policy: 
+Eviction:     fifo
+---
+Total loads: 318197
+Total stores: 197486
+Load hits: 310272
+Load misses: 7925
+Store hits: 162341
+Store misses: 35145
+Total cycles: 23434283
+
