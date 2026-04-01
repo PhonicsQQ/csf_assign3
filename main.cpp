@@ -139,19 +139,6 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, Flag &flags) {
   return 0;
 }
 
-void handleCacheHit(bool loaded, CacheData &cacheData, bool writeBack, Set &set, int hit) {
-  // load only needs to increase count because it is already on the cache
-  if(loaded) {
-    cacheData.loadHits++;
-    cacheData.totalCycles++;
-  }
-  // handle store case
-  else {
-    handleStoreHit(cacheData, writeBack, set, hit);
-  }
-  set.slots[hit].access_ts = cacheData.timestamps;
-}
-
 // handle case when store command results in cache hit
 void handleStoreHit(CacheData &cacheData, bool writeBack, Set &set, int hit) {
   // update storeHits and totalCycles
@@ -167,6 +154,21 @@ void handleStoreHit(CacheData &cacheData, bool writeBack, Set &set, int hit) {
   }
 }
 
+// handle case when cache call results in hit
+void handleCacheHit(bool loaded, CacheData &cacheData, bool writeBack, Set &set, int hit) {
+  // load only needs to increase count because it is already on the cache
+  if(loaded) {
+    cacheData.loadHits++;
+    cacheData.totalCycles++;
+  }
+  // handle store case
+  else {
+    handleStoreHit(cacheData, writeBack, set, hit);
+  }
+  set.slots[hit].access_ts = cacheData.timestamps;
+}
+
+// handle case when cache load call results in miss
 void handleCacheMissLoad(CacheData &cacheData, uint32_t blkSize, Set &set, bool lru, uint32_t tag) {
   cacheData.loadMisses++;
   cacheData.totalCycles++;
