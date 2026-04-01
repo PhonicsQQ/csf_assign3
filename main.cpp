@@ -2,15 +2,14 @@
 #include <sstream>
 #include <string>
 #include <cstdint>
-#include <cmath>
 #include <vector>
 
 
 //inialization for slot set and cache implementation
 struct Slot {
-  uint32_t tag;
-  bool valid, dirty;
-  uint32_t load_ts, access_ts;
+  uint32_t tag = 0;
+  bool valid = false, dirty = false;
+  uint32_t load_ts = 0, access_ts = 0;
 };
 
 struct Set {
@@ -283,7 +282,7 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, const 
       }
       else {
         //no write alloc so skip
-        cacheData.totalCycles += 100 + 1;
+        cacheData.totalCycles += 100;
       }
     }
   }  
@@ -320,7 +319,7 @@ int main( int argc, char **argv ) {
 
   //ERROR HANDLING: blkSize entered incorrectly
   if (blkSize < 4) {
-    std::cerr << "Block size must be greater than 4"<< std::endl;
+    std::cerr << "Block size must be at least 4"<< std::endl;
     return 1;
   }
 
