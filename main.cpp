@@ -122,6 +122,131 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[
   return 0;
 }
 
+void updateCache(Cache newCache, std::string line, uint64_t cacheData[], bool flag_init[], uint32_t offsetBits, uint32_t indexBits, uint32_t blkSize) {
+    
+  bool writeAlloc = flag_init[0];
+  bool writeBack = flag_init[1];
+  bool lru = flag_init[2];
+
+  char operation;
+  uint32_t address;
+  int data; // ignored for this assignment
+
+  //string stream to help parse the input
+  std::stringstream ss(line);
+  ss >> operation;
+  ss >> std::hex >> address;
+  ss >> std::dec >> data;
+
+  // Extract index and tag 
+  uint32_t index = (address >> offsetBits) & ((1u << indexBits) - 1);
+  uint32_t tag = address >> (offsetBits + indexBits);
+
+  Set &set = newCache.sets[index];
+  cacheData[7]++;
+
+  //update load or store values
+  bool loaded = (operation == 'l');
+
+  if(loaded) {
+    cacheData[0]++;
+  } 
+  else {
+    cacheData[1]++;
+  }
+
+  int hit = -1;
+  for(int i = 0; i <  (int)set.slots.size(); i++) {
+    if(set.slots[i].valid && set.slots[i].tag == tag) {
+      hit = i;
+      break;
+    }
+  }
+
+  if(hit >= 0) {
+  // Cache hit
+    if(loaded) {
+      cacheData[2]++;
+      cacheData[6]++;
+      
+    } 
+    else {
+      cacheData[4]++;
+      cacheData[6]++;
+      if (writeBack) {
+        set.slots[hit].dirty = true;
+      } else {
+        // writethrough
+        cacheData[6] += 100;
+      }
+    }
+    set.slots[hit].access_ts = cacheData[7];
+  } 
+
+  else {
+    // Cache miss
+    if(loaded) {
+      cacheData[3]++;
+      cacheData[6]++;
+      cacheData[6] += blkSize/4 * 100;
+      //try to insert in new slot thats empty
+      hit = findEmpty(set);
+      //if no empty spots then we have to free up one with FIFO logic
+      if (hit < 0) {
+        hit = findEvict(set, lru);
+
+        if (set.slots[hit].dirty) {
+          cacheData[6] += blkSize/4 * 100;
+
+        }
+      }
+
+      set.slots[hit].valid = true;
+      set.slots[hit].tag = tag;
+      set.slots[hit].access_ts = cacheData[7];
+      set.slots[hit].dirty = false;
+      set.slots[hit].load_ts = cacheData[7];
+    } 
+
+      else {
+        cacheData[5]++;
+        
+        if(writeAlloc) {
+          cacheData[6] += blkSize/4 * 100 + 1;
+          hit = findEmpty(set);
+
+          if (hit < 0) {
+            hit = findEvict(set, lru);
+
+            if (set.slots[hit].dirty) {
+              cacheData[6] += blkSize/4 * 100;
+
+            }
+          }
+
+          set.slots[hit].valid = true;
+          set.slots[hit].tag = tag;
+          set.slots[hit].access_ts = cacheData[7];
+          set.slots[hit].dirty = false;
+          set.slots[hit].load_ts = cacheData[7];
+
+          if (writeBack) {
+            set.slots[hit].dirty = true;
+          } else {
+            // writethrough
+            set.slots[hit].dirty = false;
+            cacheData[6] += 100;
+          }
+      }
+      else {
+        //no write alloc so skip
+        cacheData[6] += 100 + 1;
+      }
+    }
+  }  
+}
+
+
 int main( int argc, char **argv ) {
   //ERROR HANDLING: incorrect number of args entered
   if (argc != 7) {
@@ -147,14 +272,12 @@ int main( int argc, char **argv ) {
   }
 
   //intialize writeAlloc writeBack and lru
+  //flag_init contains the following data at the following indices: 0 - writeAlloc; 1 - writeBack; 2 - lru
   bool flag_init[3];
   // ERROR HANDLING: incorrect args inputted
   if (handleFlags(argv[4], argv[5], argv[6], flag_init) == 1) {
     return 1;
   }
-  bool writeAlloc = flag_init[0];
-  bool writeBack = flag_init[1];
-  bool lru = flag_init[2];
 
   //offset and index initalization
   uint32_t offsetBits = bitSize(blkSize);
@@ -175,125 +298,8 @@ int main( int argc, char **argv ) {
   std::string line;
   while(std::getline(std::cin, line)) {
     if(!line.empty()) {
-
-      char operation;
-      uint32_t address;
-      int data; // ignored for this assignment
-
-      //string stream to help parse the input
-      std::stringstream ss(line);
-      ss >> operation;
-      ss >> std::hex >> address;
-      ss >> std::dec >> data;
-  
-      // Extract index and tag 
-      uint32_t index = (address >> offsetBits) & ((1u << indexBits) - 1);
-      uint32_t tag = address >> (offsetBits + indexBits);
-  
-      Set &set = newCache.sets[index];
-      cacheData[7]++;
-  
-      //update load or store values
-      bool loaded = (operation == 'l');
-
-      if(loaded) {
-        cacheData[0]++;
-      } 
-      else {
-        cacheData[1]++;
-      }
-
-      int hit = -1;
-      for(int i = 0; i <  (int)set.slots.size(); i++) {
-        if(set.slots[i].valid && set.slots[i].tag == tag) {
-          hit = i;
-          break;
-        }
-      }
-
-      if(hit >= 0) {
-      // Cache hit
-        if(loaded) {
-          cacheData[2]++;
-          cacheData[6]++;
-          
-        } 
-        else {
-          cacheData[4]++;
-          cacheData[6]++;
-          if (writeBack) {
-            set.slots[hit].dirty = true;
-          } else {
-            // writethrough
-            cacheData[6] += 100;
-          }
-        }
-        set.slots[hit].access_ts = cacheData[7];
-      } 
-
-      else {
-        // Cache miss
-        if(loaded) {
-          cacheData[3]++;
-          cacheData[6]++;
-          cacheData[6] += blkSize/4 * 100;
-          //try to insert in new slot thats empty
-          hit = findEmpty(set);
-          //if no empty spots then we have to free up one with FIFO logic
-          if (hit < 0) {
-            hit = findEvict(set, lru);
-
-            if (set.slots[hit].dirty) {
-              cacheData[6] += blkSize/4 * 100;
-
-            }
-          }
-
-          set.slots[hit].valid = true;
-          set.slots[hit].tag = tag;
-          set.slots[hit].access_ts = cacheData[7];
-          set.slots[hit].dirty = false;
-          set.slots[hit].load_ts = cacheData[7];
-        } 
-
-        else {
-          cacheData[5]++;
-          
-          if(writeAlloc) {
-            cacheData[6] += blkSize/4 * 100 + 1;
-            hit = findEmpty(set);
-
-            if (hit < 0) {
-              hit = findEvict(set, lru);
-
-              if (set.slots[hit].dirty) {
-                cacheData[6] += blkSize/4 * 100;
-
-              }
-            }
-
-            set.slots[hit].valid = true;
-            set.slots[hit].tag = tag;
-            set.slots[hit].access_ts = cacheData[7];
-            set.slots[hit].dirty = false;
-            set.slots[hit].load_ts = cacheData[7];
-
-            if (writeBack) {
-              set.slots[hit].dirty = true;
-            } else {
-              // writethrough
-              set.slots[hit].dirty = false;
-              cacheData[6] += 100;
-            }
-        }
-        else {
-          //no write alloc so skip
-          cacheData[6] += 100 + 1;
-        }
-      }
-    }
-    
-  }  
+      updateCache(newCache, line, cacheData, flag_init, offsetBits, indexBits, blkSize);      
+    }  
   }
 
   std::cout << "Total loads: " << cacheData[0] << std::endl;
