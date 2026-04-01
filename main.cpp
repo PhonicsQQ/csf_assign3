@@ -21,6 +21,17 @@ struct Cache {
   std::vector<Set> sets;
 };
 
+struct CacheData {
+  uint64_t totalLoads = 0;
+  uint64_t totalStores = 0;
+  uint64_t loadHits = 0;
+  uint64_t loadMisses = 0;
+  uint64_t storeHits = 0;
+  uint64_t storeMisses = 0;
+  uint64_t totalCycles = 0;
+  uint64_t timestamps = 0;
+};
+
 bool isPowerOf2(uint64_t n) {
   return n && !(n & (n - 1));
 }
@@ -122,7 +133,7 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[
   return 0;
 }
 
-void updateCache(Cache &newCache, std::string line, uint64_t cacheData[], bool flag_init[], uint32_t offsetBits, uint32_t indexBits, uint32_t blkSize) {
+void updateCache(Cache &newCache, std::string line, CacheData &cacheData, bool flag_init[], uint32_t offsetBits, uint32_t indexBits, uint32_t blkSize) {
     
   bool writeAlloc = flag_init[0];
   bool writeBack = flag_init[1];
@@ -143,16 +154,16 @@ void updateCache(Cache &newCache, std::string line, uint64_t cacheData[], bool f
   uint32_t tag = address >> (offsetBits + indexBits);
 
   Set &set = newCache.sets[index];
-  cacheData[7]++;
+  cacheData.timestamps++;
 
   //update load or store values
   bool loaded = (operation == 'l');
 
   if(loaded) {
-    cacheData[0]++;
+    cacheData.totalLoads++;
   } 
   else {
-    cacheData[1]++;
+    cacheData.totalStores++;
   }
 
   // check if address is a hit
@@ -167,29 +178,29 @@ void updateCache(Cache &newCache, std::string line, uint64_t cacheData[], bool f
   if(hit >= 0) {
   // Cache hit
     if(loaded) {
-      cacheData[2]++;
-      cacheData[6]++;
+      cacheData.loadHits++;
+      cacheData.totalCycles++;
       
     } 
     else {
-      cacheData[4]++;
-      cacheData[6]++;
+      cacheData.storeHits++;
+      cacheData.totalCycles++;
       if (writeBack) {
         set.slots[hit].dirty = true;
       } else {
         // writethrough
-        cacheData[6] += 100;
+        cacheData.totalCycles += 100;
       }
     }
-    set.slots[hit].access_ts = cacheData[7];
+    set.slots[hit].access_ts = cacheData.timestamps;
   } 
 
   else {
     // Cache miss
     if(loaded) {
-      cacheData[3]++;
-      cacheData[6]++;
-      cacheData[6] += blkSize/4 * 100;
+      cacheData.loadMisses++;
+      cacheData.totalCycles++;
+      cacheData.totalCycles += blkSize/4 * 100;
       //try to insert in new slot thats empty
       hit = findEmpty(set);
       //if no empty spots then we have to free up one with FIFO logic
@@ -197,64 +208,64 @@ void updateCache(Cache &newCache, std::string line, uint64_t cacheData[], bool f
         hit = findEvict(set, lru);
 
         if (set.slots[hit].dirty) {
-          cacheData[6] += blkSize/4 * 100;
+          cacheData.totalCycles += blkSize/4 * 100;
 
         }
       }
 
       set.slots[hit].valid = true;
       set.slots[hit].tag = tag;
-      set.slots[hit].access_ts = cacheData[7];
+      set.slots[hit].access_ts = cacheData.timestamps;
       set.slots[hit].dirty = false;
-      set.slots[hit].load_ts = cacheData[7];
+      set.slots[hit].load_ts = cacheData.timestamps;
     } 
 
       else {
-        cacheData[5]++;
+        cacheData.storeMisses++;
         
         if(writeAlloc) {
-          cacheData[6] += blkSize/4 * 100 + 1;
+          cacheData.totalCycles += blkSize/4 * 100 + 1;
           hit = findEmpty(set);
 
           if (hit < 0) {
             hit = findEvict(set, lru);
 
             if (set.slots[hit].dirty) {
-              cacheData[6] += blkSize/4 * 100;
+              cacheData.totalCycles += blkSize/4 * 100;
 
             }
           }
 
           set.slots[hit].valid = true;
           set.slots[hit].tag = tag;
-          set.slots[hit].access_ts = cacheData[7];
+          set.slots[hit].access_ts = cacheData.timestamps;
           set.slots[hit].dirty = false;
-          set.slots[hit].load_ts = cacheData[7];
+          set.slots[hit].load_ts = cacheData.timestamps;
 
           if (writeBack) {
             set.slots[hit].dirty = true;
           } else {
             // writethrough
             set.slots[hit].dirty = false;
-            cacheData[6] += 100;
+            cacheData.totalCycles += 100;
           }
       }
       else {
         //no write alloc so skip
-        cacheData[6] += 100 + 1;
+        cacheData.totalCycles += 100 + 1;
       }
     }
   }  
 }
 
-void printOutputs(uint64_t cacheData[]) {
-  std::cout << "Total loads: " << cacheData[0] << std::endl;
-  std::cout << "Total stores: " << cacheData[1] << std::endl;
-  std::cout << "Load hits: " << cacheData[2] << std::endl;
-  std::cout << "Load misses: " << cacheData[3] << std::endl;
-  std::cout << "Store hits: " << cacheData[4] << std::endl;
-  std::cout << "Store misses: " << cacheData[5] << std::endl;
-  std::cout << "Total cycles: " << cacheData[6] << std::endl;
+void printOutputs(CacheData cacheData) {
+  std::cout << "Total loads: " << cacheData.totalLoads << std::endl;
+  std::cout << "Total stores: " << cacheData.totalStores << std::endl;
+  std::cout << "Load hits: " << cacheData.loadHits << std::endl;
+  std::cout << "Load misses: " << cacheData.loadMisses << std::endl;
+  std::cout << "Store hits: " << cacheData.storeHits << std::endl;
+  std::cout << "Store misses: " << cacheData.storeMisses << std::endl;
+  std::cout << "Total cycles: " << cacheData.totalCycles << std::endl;
 }
 
 
@@ -303,7 +314,7 @@ int main( int argc, char **argv ) {
 
   //cacheData array stores relevant information about cache. The following indices store the following data:
   //0 - totalLoads; 1 - totalStores; 2 - loadHits; 3 - loadMisses; 4 - storeHits; 5 - storeMisses; 6 - totalCycles; 7 - timestamps
-  uint64_t cacheData[8] = {0};
+  CacheData cacheData;
 
   //parse the traces
   std::string line;
