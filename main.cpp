@@ -122,7 +122,7 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[
   return 0;
 }
 
-void updateCache(Cache newCache, std::string line, uint64_t cacheData[], bool flag_init[], uint32_t offsetBits, uint32_t indexBits, uint32_t blkSize) {
+void updateCache(Cache &newCache, std::string line, uint64_t cacheData[], bool flag_init[], uint32_t offsetBits, uint32_t indexBits, uint32_t blkSize) {
     
   bool writeAlloc = flag_init[0];
   bool writeBack = flag_init[1];
@@ -155,6 +155,7 @@ void updateCache(Cache newCache, std::string line, uint64_t cacheData[], bool fl
     cacheData[1]++;
   }
 
+  // check if address is a hit
   int hit = -1;
   for(int i = 0; i <  (int)set.slots.size(); i++) {
     if(set.slots[i].valid && set.slots[i].tag == tag) {
@@ -246,6 +247,16 @@ void updateCache(Cache newCache, std::string line, uint64_t cacheData[], bool fl
   }  
 }
 
+void printOutputs(uint64_t cacheData[]) {
+  std::cout << "Total loads: " << cacheData[0] << std::endl;
+  std::cout << "Total stores: " << cacheData[1] << std::endl;
+  std::cout << "Load hits: " << cacheData[2] << std::endl;
+  std::cout << "Load misses: " << cacheData[3] << std::endl;
+  std::cout << "Store hits: " << cacheData[4] << std::endl;
+  std::cout << "Store misses: " << cacheData[5] << std::endl;
+  std::cout << "Total cycles: " << cacheData[6] << std::endl;
+}
+
 
 int main( int argc, char **argv ) {
   //ERROR HANDLING: incorrect number of args entered
@@ -302,13 +313,9 @@ int main( int argc, char **argv ) {
     }  
   }
 
-  std::cout << "Total loads: " << cacheData[0] << std::endl;
-  std::cout << "Total stores: " << cacheData[1] << std::endl;
-  std::cout << "Load hits: " << cacheData[2] << std::endl;
-  std::cout << "Load misses: " << cacheData[3] << std::endl;
-  std::cout << "Store hits: " << cacheData[4] << std::endl;
-  std::cout << "Store misses: " << cacheData[5] << std::endl;
-  std::cout << "Total cycles: " << cacheData[6] << std::endl;
+  // print out cache data
+  printOutputs(cacheData);
 
+  // successful run, return 0
   return 0;
 }
