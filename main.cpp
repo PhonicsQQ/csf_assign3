@@ -21,6 +21,7 @@ struct Cache {
   std::vector<Set> sets;
 };
 
+// CacheData struct to track number of loads, stores, hits, misses, etc. in cache
 struct CacheData {
   uint64_t totalLoads = 0;
   uint64_t totalStores = 0;
@@ -32,6 +33,14 @@ struct CacheData {
   uint64_t timestamps = 0;
 };
 
+// Flags struct to track user input flags for writeAlloc, writeBack, and lru
+struct Flag {
+    bool writeAlloc;
+    bool writeBack;
+    bool lru;
+};
+
+// returns whether uint64_t n is a power of 2
 bool isPowerOf2(uint64_t n) {
   return n && !(n & (n - 1));
 }
@@ -47,7 +56,6 @@ uint32_t bitSize(uint32_t n) {
   
 }
 
-
 //empty slot helper
 int findEmpty(const Set &set) {
   for (int i = 0; i < (int)set.slots.size(); i++) {
@@ -57,7 +65,6 @@ int findEmpty(const Set &set) {
   }
   return -1;
 }
-
 
 //find oldest slot using either methodology
 int findEvict(const Set &set, bool lru) {
@@ -83,16 +90,15 @@ int findEvict(const Set &set, bool lru) {
 }
 
 // parse input for write allocate, write through, and eviction
-// place corresponding flag into flag_init
 // return 0 if all flags are parsed without error; else, return 1 (error code)
-bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[]) {
+bool handleFlags(std::string wa, std::string wt, std::string ev, Flag &flags) {
   
   // handle write allocate flag
   if (wa == "write-allocate") {
-    flag_init[0] = true;
+    flags.writeAlloc = true;
   }
   else if(wa == "no-write-allocate") {
-    flag_init[0] = false;
+    flags.writeAlloc = false;
   }
   else {
     std::cerr << "invalid write-alloc arg" << std::endl;
@@ -101,10 +107,10 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[
 
   // handle write through flag
   if (wt == "write-through") {
-    flag_init[1] = false;
+    flags.writeBack = false;
   }
   else if(wt == "write-back") {
-    flag_init[1] = true;
+    flags.writeBack = true;
   }
   else {
     std::cerr << "invalid write-through arg" << std::endl;
@@ -113,10 +119,10 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[
 
   // handle eviction flag
   if (ev == "lru") {
-    flag_init[2] = true;
+    flags.lru = true;
   }
   else if(ev == "fifo") {
-    flag_init[2] = false;
+    flags.lru = false;
   }
   else {
     std::cerr << "invalid eviction arg" << std::endl;
@@ -124,7 +130,7 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[
   }
 
   //if writeallocate is false and writeback is true
-  if (!flag_init[0] && flag_init[1]) {
+  if (!flags.writeAlloc && flags.writeBack) {
     std::cerr << "write should allocate and also write back" << std::endl;
     return 1;
   }
@@ -133,12 +139,25 @@ bool handleFlags(std::string wa, std::string wt, std::string ev, bool flag_init[
   return 0;
 }
 
-void updateCache(Cache &newCache, std::string line, CacheData &cacheData, bool flag_init[], uint32_t offsetBits, uint32_t indexBits, uint32_t blkSize) {
-    
-  bool writeAlloc = flag_init[0];
-  bool writeBack = flag_init[1];
-  bool lru = flag_init[2];
+// handle case when store command results in cache hit
+void handleStoreHit(CacheData &cacheData, bool writeBack, Set &set, int hit) {
+  // update storeHits and totalCycles
+  cacheData.storeHits++;
+  cacheData.totalCycles++;
+  // handle writeBack
+  if (writeBack) {
+    set.slots[hit].dirty = true;
+  } 
+  // handle writethrough
+  else {
+    cacheData.totalCycles += 100;
+  }
+}
 
+// given a command line, parses command and updates CacheData accordingly
+void updateCache(Cache &newCache, std::string line, CacheData &cacheData, const Flag &flags, uint32_t offsetBits, uint32_t indexBits, uint32_t blkSize) {
+
+  // parse command
   char operation;
   uint32_t address;
   int data; // ignored for this assignment
@@ -175,22 +194,16 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, bool f
     }
   }
 
-  if(hit >= 0) {
   // Cache hit
+  if(hit >= 0) {
+    // load only needs to increase count because it is already on the cache
     if(loaded) {
       cacheData.loadHits++;
       cacheData.totalCycles++;
-      
-    } 
+    }
+    // handle store case
     else {
-      cacheData.storeHits++;
-      cacheData.totalCycles++;
-      if (writeBack) {
-        set.slots[hit].dirty = true;
-      } else {
-        // writethrough
-        cacheData.totalCycles += 100;
-      }
+      handleStoreHit(cacheData, flags.writeBack, set, hit);
     }
     set.slots[hit].access_ts = cacheData.timestamps;
   } 
@@ -205,7 +218,7 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, bool f
       hit = findEmpty(set);
       //if no empty spots then we have to free up one with FIFO logic
       if (hit < 0) {
-        hit = findEvict(set, lru);
+        hit = findEvict(set, flags.lru);
 
         if (set.slots[hit].dirty) {
           cacheData.totalCycles += blkSize/4 * 100;
@@ -223,12 +236,12 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, bool f
       else {
         cacheData.storeMisses++;
         
-        if(writeAlloc) {
+        if(flags.writeAlloc) {
           cacheData.totalCycles += blkSize/4 * 100 + 1;
           hit = findEmpty(set);
 
           if (hit < 0) {
-            hit = findEvict(set, lru);
+            hit = findEvict(set, flags.lru);
 
             if (set.slots[hit].dirty) {
               cacheData.totalCycles += blkSize/4 * 100;
@@ -242,7 +255,7 @@ void updateCache(Cache &newCache, std::string line, CacheData &cacheData, bool f
           set.slots[hit].dirty = false;
           set.slots[hit].load_ts = cacheData.timestamps;
 
-          if (writeBack) {
+          if (flags.writeBack) {
             set.slots[hit].dirty = true;
           } else {
             // writethrough
@@ -293,11 +306,10 @@ int main( int argc, char **argv ) {
     return 1;
   }
 
-  //intialize writeAlloc writeBack and lru
-  //flag_init contains the following data at the following indices: 0 - writeAlloc; 1 - writeBack; 2 - lru
-  bool flag_init[3];
+  //intialize flags corresponding to user input
+  Flag flags;
   // ERROR HANDLING: incorrect args inputted
-  if (handleFlags(argv[4], argv[5], argv[6], flag_init) == 1) {
+  if (handleFlags(argv[4], argv[5], argv[6], flags) == 1) {
     return 1;
   }
 
@@ -312,15 +324,13 @@ int main( int argc, char **argv ) {
     set.slots.resize(numBlocks);
   }
 
-  //cacheData array stores relevant information about cache. The following indices store the following data:
-  //0 - totalLoads; 1 - totalStores; 2 - loadHits; 3 - loadMisses; 4 - storeHits; 5 - storeMisses; 6 - totalCycles; 7 - timestamps
   CacheData cacheData;
 
   //parse the traces
   std::string line;
   while(std::getline(std::cin, line)) {
     if(!line.empty()) {
-      updateCache(newCache, line, cacheData, flag_init, offsetBits, indexBits, blkSize);      
+      updateCache(newCache, line, cacheData, flags, offsetBits, indexBits, blkSize);      
     }  
   }
 
